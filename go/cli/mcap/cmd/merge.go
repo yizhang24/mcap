@@ -9,7 +9,6 @@ import (
 
 	"github.com/foxglove/mcap/go/cli/mcap/utils"
 	"github.com/foxglove/mcap/go/mcap"
-	"github.com/foxglove/mcap/go/mcap/readopts"
 	"github.com/spf13/cobra"
 )
 
@@ -83,6 +82,14 @@ func (m *mcapMerger) outputSchemaID(inputID int, inputSchemaID uint16) (uint16, 
 		schemaID: inputSchemaID,
 	}]
 	return v, ok
+}
+
+func (m *mcapMerger) addMetadata(w *mcap.Writer, metadata *mcap.Metadata) error {
+	err := w.WriteMetadata(metadata)
+	if err != nil {
+		return fmt.Errorf("failed to write metadata: %w", err)
+	}
+	return nil
 }
 
 func (m *mcapMerger) addChannel(w *mcap.Writer, inputID int, channel *mcap.Channel) (uint16, error) {
@@ -168,7 +175,9 @@ func (m *mcapMerger) mergeInputs(w io.Writer, inputs []namedReader) error {
 		}
 		defer reader.Close()
 		profiles[inputID] = reader.Header().Profile
-		iterator, err := reader.Messages(readopts.UsingIndex(false))
+		iterator, err := reader.Messages(mcap.UsingIndex(false), mcap.WithMetadataCallback(func(metadata *mcap.Metadata) error {
+			return m.addMetadata(writer, metadata)
+		}))
 		if err != nil {
 			return fmt.Errorf("failed to read messages on %s: %w", input.name, err)
 		}
