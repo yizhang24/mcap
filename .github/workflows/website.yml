@@ -10,7 +10,7 @@ jobs:
   docs-home:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           lfs: true
 
@@ -36,7 +36,7 @@ jobs:
   docs-cpp:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: make -C cpp ci-docs
 
@@ -51,7 +51,7 @@ jobs:
   docs-python:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v4
         with:
@@ -72,7 +72,7 @@ jobs:
   docs-swift:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: swift-actions/setup-swift@v1
         with:
@@ -110,7 +110,7 @@ jobs:
       deployments: write
     steps:
       # need checkout so that cloudflare can detect git commit
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/download-artifact@v3
 
